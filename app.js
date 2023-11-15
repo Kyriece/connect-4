@@ -1,3 +1,5 @@
+let player = 1
+let cells;
 // Function to create a 7x6 grid
 function createGrid() {
     const table = document.getElementById('Grid');
@@ -12,12 +14,26 @@ function createGrid() {
 
 // Function to assign values to cells on click
 function assignValues() {
-    const cells = document.querySelectorAll("#Grid td");
+    cells = document.querySelectorAll("#Grid td")
     cells.forEach((cell, index) => {
         cell.addEventListener('click', () => {
-            cell.innerHTML = `Value ${index}`; // Content changes on click
+            // Checks if cell is taken
+            if(cell.dataset.isSet){
+                return;
+            }
+            // Assigns owner and increments player
+            cell.dataset.Owner = player;
+            cell.innerHTML = `Owner ${cell.dataset.Owner}, Value ${index}`; // Content changes on click
+            cell.dataset.isSet = "true"
+            player = player === 1 ? 2 : 1;
+            currentPlayerDisplay();
         });
     });
+}
+
+function currentPlayerDisplay() {
+    const playerDisplayElement = document.getElementById("currentPlayer");
+    playerDisplayElement.innerHTML = `The current player is: ${player}`;
 }
 
 // Initialize the grid and setup event listeners when the window loads
