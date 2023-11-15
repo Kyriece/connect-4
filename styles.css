@@ -1,0 +1,17 @@
+#Grid td {
+    width: 50px;
+    height: 50px;
+    border: 1px solid black;
+    text-align: center;
+    vertical-align: middle;
+}
+
+h3 {
+    color: #333333;        /* Text color */
+    font-family: Arial, sans-serif; /* Font family */
+    font-size: 24px;       /* Font size */
+    font-weight: bold;     /* Font weight */
+    text-align: center;    /* Text alignment */
+    margin-top: 20px;      /* Top margin */
+    margin-bottom: 20px;   /* Bottom margin */
+}
