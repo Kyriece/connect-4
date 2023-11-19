@@ -1,6 +1,7 @@
 let player = 1
 let cells;
 let totalColumns = 6;
+let totalRows = 7;
 // Function to create a 7x6 grid
 function initializeGrid() {
     const table = document.querySelector("#Grid");
@@ -32,7 +33,7 @@ function assignValues() {
             // Check if connect 4
             row = cell.dataset.row;
             column = cell.dataset.column;
-            checkWin(row, column);
+            console.log(checkWin(row, column));
             // Change Player
             player = player === 1 ? 2 : 1;
             currentPlayerDisplay();
@@ -41,34 +42,74 @@ function assignValues() {
 }
 
 function checkWin(row, column) {
-    let columnChecked = []; 
     // Check Row Neighbors
-    checkRow(parseInt(row), parseInt(column), columnChecked);
-
-    console.log(`Total Matches: ${columnChecked.length}`); // Log the number of matching neighbors
-
+    let checkedCells = []; 
+    checkRow(parseInt(row), parseInt(column), checkedCells);
+    console.log(`Total Matches ROW: ${checkedCells.length}`); // Log the number of matching neighbors
+    if(checkedCells.length >= 4){
+        return true;
+    }
+    // Check diagnols
+    checkedCells = [];
+    checkDiagonals(row, column, checkedCells);
+    console.log(`Total Matches DIAGNOL: ${checkedCells.length}`); // Log the number of matching neighbors
+    if(checkedCells.length >= 4){
+        return true;
+    }
+    // Check Column Neighbors
+    checkedCells = [];
+    checkVertical(row, column, checkedCells);
+    console.log(`Total Matches VERTICAL: ${checkedCells.length}`); // Log the number of matching neighbors
+    if(checkedCells.length >= 4){
+        return true;
+    }
+    return false;
     // Additional checks (diagonal, column, etc.) can be added here
 }
 
-
-
-function checkRow(row, column, columnChecked) {
+function checkRow(row, column, checkedCells) {
     // Check if the column is within the grid bounds and not already checked
-    if (column < 0 || column >= totalColumns || columnChecked.includes(column)) {
+    if (column < 0 || column >= totalColumns || checkedCells.includes(column)) {
         return;
     }
-
     let cell = getCellByRowColumn(row, column);
     if (cell && cell.dataset.Owner == player) {
-        columnChecked.push(column); // Mark this column as checked
+        checkedCells.push(column); // Mark this column as checked
         // Recursively check left and right neighbors
-        checkRow(parseInt(row), parseInt(column) - 1, columnChecked, totalColumns);
-        checkRow(parseInt(row), parseInt(column) + 1, columnChecked, totalColumns);
+        checkRow(parseInt(row), parseInt(column) - 1, checkedCells, totalColumns);
+        checkRow(parseInt(row), parseInt(column) + 1, checkedCells, totalColumns);
     }
 }
 
+function checkDiagonals(row, column, checkedCells) {
+    // Check if the cell is within the grid bounds and not already checked
+    if (row < 0 || row >= totalRows || column < 0 || column >= totalColumns || checkedCells.includes(`${row},${column}`)) {
+        return;
+    }
+    let cell = getCellByRowColumn(row, column);
+    if (cell && cell.dataset.Owner == player) {
+        checkedCells.push(`${row},${column}`);
+        // Recursively check both diagonal directions
+        checkDiagonals(parseInt(row) - 1, parseInt(column) - 1, checkedCells); // Top-left
+        checkDiagonals(parseInt(row) + 1, parseInt(column) + 1, checkedCells); // Bottom-right
+        checkDiagonals(parseInt(row) - 1, parseInt(column) + 1, checkedCells); // Top-right
+        checkDiagonals(parseInt(row) + 1, parseInt(column) - 1, checkedCells); // Bottom-left
+    }
+}
 
-
+function checkVertical(row, column, checkedCells) {
+    // Check if the cell is within the grid bounds and not already checked
+    if (row < 0 || row >= totalRows || checkedCells.includes(`${row},${column}`)) {
+        return;
+    }
+    let cell = getCellByRowColumn(row, column);
+    if (cell && cell.dataset.Owner == player) {
+        checkedCells.push(`${row},${column}`);
+        // Recursively check up and down
+        checkVertical(parseInt(row) - 1, column, checkedCells); // Up
+        checkVertical(parseInt(row) + 1, column, checkedCells); // Down
+    }
+}
 
 function getCellByRowColumn(row, column) {
     for (let cell of cells) {
@@ -77,14 +118,6 @@ function getCellByRowColumn(row, column) {
         }
     }
     return null; // Return null if no cell matches the criteria
-}
-
-function checkColumn(column){
-
-}
-
-function checkDiagonal(row, column){
-
 }
 
 function currentPlayerDisplay() {
