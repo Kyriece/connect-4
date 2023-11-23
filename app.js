@@ -12,7 +12,6 @@ function initializeGrid() {
             cell.dataset.row = rowIndex;       // Set row index
             cell.dataset.column = columnIndex; // Set column index
             // Initialize the cell with some default content if necessary
-            cell.innerHTML = "Empty"; 
         }
     }
 }
@@ -26,14 +25,18 @@ function assignValues() {
             if(cell.dataset.isSet){
                 return;
             }
-            // Assigns owner and increments player
-            cell.dataset.Owner = player;
-            cell.innerHTML = `Owner ${cell.dataset.Owner}, Value ${index}`; // Content changes on click
-            cell.dataset.isSet = "true"
-            // Check if connect 4
             row = cell.dataset.row;
             column = cell.dataset.column;
+            // Gets bottom cell
+            bottomCell = getBottomCell(cell);
+            // Assigns owner and increments player
+            bottomCell.dataset.Owner = player;
+            bottomCell.innerHTML = `Owner ${bottomCell.dataset.Owner}, Value ${index}`; // Content changes on click
+            bottomCell.dataset.isSet = "true"
+            // Check if connect 4
+            
             console.log(checkWin(row, column));
+            console.log(`row: ${row}, col: ${column}`);
             // Change Player
             player = player === 1 ? 2 : 1;
             currentPlayerDisplay();
@@ -41,25 +44,42 @@ function assignValues() {
     });
 }
 
+function getBottomCell(cell){
+    row = parseInt(cell.dataset.row);
+    column = parseInt(cell.dataset.column);
+    cellBelow = getCellByRowColumn(row+1, column);
+    // Checks if bottom row or cellbelow is taken
+    if(row == totalRows-1 || cellBelow.dataset.isSet){
+        console.log(`bottom`);
+        return cell;
+    }
+    else{
+        console.log(`${cellBelow}`)
+        // Gets bottom cell
+        console.log(`Row ${row}, Column: ${column}`);
+        return getBottomCell(cellBelow);
+    }
+}
+
 function checkWin(row, column) {
     // Check Row Neighbors
     let checkedCells = []; 
     checkRow(parseInt(row), parseInt(column), checkedCells);
-    console.log(`Total Matches ROW: ${checkedCells.length}`); // Log the number of matching neighbors
+    console.log(`Total Matches ROW: ${checkedCells.length}`);
     if(checkedCells.length >= 4){
         return true;
     }
     // Check diagnols
     checkedCells = [];
     checkDiagonals(row, column, checkedCells);
-    console.log(`Total Matches DIAGNOL: ${checkedCells.length}`); // Log the number of matching neighbors
+    console.log(`Total Matches DIAGNOL: ${checkedCells.length}`); 
     if(checkedCells.length >= 4){
         return true;
     }
     // Check Column Neighbors
     checkedCells = [];
     checkVertical(row, column, checkedCells);
-    console.log(`Total Matches VERTICAL: ${checkedCells.length}`); // Log the number of matching neighbors
+    console.log(`Total Matches VERTICAL: ${checkedCells.length}`); 
     if(checkedCells.length >= 4){
         return true;
     }

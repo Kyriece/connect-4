@@ -1,17 +1,54 @@
+/* Define CSS variables */
+:root {
+    --main-bg-color: #0077CC; /* Main background color for the board */
+    --border-color: #003366; /* Border color for the board */
+    --cell-size: 100px; /* Size of each cell (circle) */
+    --cell-border-color: #000000; /* Color of the border around each cell */
+    --disc-size: 60px; /* Size of the player's disc */
+    --player1-color: red; /* Color for player 1's discs */
+    --player2-color: yellow; /* Color for player 2's discs */
+    --grid-gap: 10px; /* Gap between cells */
+}
+
+/* Style for the game board (grid) */
+#Grid {
+    background-color: var(--main-bg-color);
+    border: 3px solid var(--border-color);
+    padding: var(--grid-gap);
+    width: auto;
+    margin: auto;
+}
+
+/* Style for each row of the grid */
+#Grid tr {
+    height: var(--cell-size);
+}
+
+/* Style for each cell of the grid */
 #Grid td {
-    width: 50px;
-    height: 50px;
-    border: 1px solid black;
+    width: var(--cell-size);
+    height: var(--cell-size);
+    background-color: #FFFFFF; /* White for empty slots */
+    border-radius: 50%; /* Circular cells */
+    border: 2px solid var(--cell-border-color);
     text-align: center;
     vertical-align: middle;
 }
 
-h3 {
-    color: #333333;        /* Text color */
-    font-family: Arial, sans-serif; /* Font family */
-    font-size: 24px;       /* Font size */
-    font-weight: bold;     /* Font weight */
-    text-align: center;    /* Text alignment */
-    margin-top: 20px;      /* Top margin */
-    margin-bottom: 20px;   /* Bottom margin */
+/* Style for player 1's discs */
+.disc-player1 {
+    width: var(--disc-size);
+    height: var(--disc-size);
+    background-color: var(--player1-color);
+    border-radius: 50%;
+    margin: auto; /* Center the disc */
+}
+
+/* Style for player 2's discs */
+.disc-player2 {
+    width: var(--disc-size);
+    height: var(--disc-size);
+    background-color: var(--player2-color);
+    border-radius: 50%;
+    margin: auto; /* Center the disc */
 }
