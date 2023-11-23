@@ -1,17 +1,18 @@
 let player = 1
 let cells;
-let totalColumns = 6;
-let totalRows = 7;
+let totalColumns = 7;
+let totalRows = 6;
 // Function to create a 7x6 grid
 function initializeGrid() {
     const table = document.querySelector("#Grid");
-    for (let rowIndex = 0; rowIndex < 7; rowIndex++) {
+    for (let rowIndex = 0; rowIndex < totalRows; rowIndex++) {
         let row = table.insertRow();
-        for (let columnIndex = 0; columnIndex < 6; columnIndex++) {
+        for (let columnIndex = 0; columnIndex < totalColumns; columnIndex++) {
             let cell = row.insertCell();
             cell.dataset.row = rowIndex;       // Set row index
             cell.dataset.column = columnIndex; // Set column index
             // Initialize the cell with some default content if necessary
+
         }
     }
 }
@@ -19,7 +20,7 @@ function initializeGrid() {
 // Function to assign values to cells on click
 function assignValues() {
     cells = document.querySelectorAll("#Grid td")
-    cells.forEach((cell, index) => {
+    cells.forEach((cell) => {
         cell.addEventListener('click', () => {
             // Checks if cell is taken
             if(cell.dataset.isSet){
@@ -30,18 +31,28 @@ function assignValues() {
             // Gets bottom cell
             bottomCell = getBottomCell(cell);
             // Assigns owner and increments player
-            bottomCell.dataset.Owner = player;
-            bottomCell.innerHTML = `Owner ${bottomCell.dataset.Owner}, Value ${index}`; // Content changes on click
-            bottomCell.dataset.isSet = "true"
-            // Check if connect 4
-            
-            console.log(checkWin(row, column));
-            console.log(`row: ${row}, col: ${column}`);
+            setCellForPlayer(bottomCell)
+            // Check if connect 4      
+            if(checkWin(row, column)){
+                endGame();
+            }
+            else{
+                player = player === 1 ? 2 : 1;
+            }
             // Change Player
-            player = player === 1 ? 2 : 1;
             currentPlayerDisplay();
         });
     });
+}
+
+function setCellForPlayer(cell){
+    let playerClass = (player === 1) ? 'disc-player1' : 'disc-player2';
+    let discDiv = document.createElement('div');
+    discDiv.className = `disc ${playerClass}`; // Apply disc class for animation
+    bottomCell.appendChild(discDiv);
+    cell.dataset.Owner = player;
+    // cell.innerHTML = `<div class="${playerClass}"></div>`; // Content changes on click
+    cell.dataset.isSet = "true"
 }
 
 function getBottomCell(cell){
@@ -50,36 +61,45 @@ function getBottomCell(cell){
     cellBelow = getCellByRowColumn(row+1, column);
     // Checks if bottom row or cellbelow is taken
     if(row == totalRows-1 || cellBelow.dataset.isSet){
-        console.log(`bottom`);
         return cell;
     }
     else{
-        console.log(`${cellBelow}`)
-        // Gets bottom cell
-        console.log(`Row ${row}, Column: ${column}`);
         return getBottomCell(cellBelow);
     }
+}
+
+function endGame(){
+    setTimeout(function() {
+        const grid = document.querySelector("#Grid");
+        grid.innerHTML = ''; // This clears the content of the grid
+        alert(`Player ${player} wins! Starting new game.`);
+        initializeGrid();
+        player = player === 1 ? 2 : 1;
+        currentPlayerDisplay();
+        assignValues();
+    }, 50); // Delay of 500 milliseconds (0.5 seconds)
 }
 
 function checkWin(row, column) {
     // Check Row Neighbors
     let checkedCells = []; 
     checkRow(parseInt(row), parseInt(column), checkedCells);
-    console.log(`Total Matches ROW: ${checkedCells.length}`);
     if(checkedCells.length >= 4){
         return true;
     }
     // Check diagnols
     checkedCells = [];
-    checkDiagonals(row, column, checkedCells);
-    console.log(`Total Matches DIAGNOL: ${checkedCells.length}`); 
+    checkDiagonalsTLBR(row, column, checkedCells);
+    if(checkedCells.length >= 4){
+        return true;
+    }
+    checkDiagonalsBLTR(row, column, checkedCells);
     if(checkedCells.length >= 4){
         return true;
     }
     // Check Column Neighbors
     checkedCells = [];
     checkVertical(row, column, checkedCells);
-    console.log(`Total Matches VERTICAL: ${checkedCells.length}`); 
     if(checkedCells.length >= 4){
         return true;
     }
@@ -101,7 +121,7 @@ function checkRow(row, column, checkedCells) {
     }
 }
 
-function checkDiagonals(row, column, checkedCells) {
+function checkDiagonalsTLBR(row, column, checkedCells) {
     // Check if the cell is within the grid bounds and not already checked
     if (row < 0 || row >= totalRows || column < 0 || column >= totalColumns || checkedCells.includes(`${row},${column}`)) {
         return;
@@ -110,10 +130,22 @@ function checkDiagonals(row, column, checkedCells) {
     if (cell && cell.dataset.Owner == player) {
         checkedCells.push(`${row},${column}`);
         // Recursively check both diagonal directions
-        checkDiagonals(parseInt(row) - 1, parseInt(column) - 1, checkedCells); // Top-left
-        checkDiagonals(parseInt(row) + 1, parseInt(column) + 1, checkedCells); // Bottom-right
-        checkDiagonals(parseInt(row) - 1, parseInt(column) + 1, checkedCells); // Top-right
-        checkDiagonals(parseInt(row) + 1, parseInt(column) - 1, checkedCells); // Bottom-left
+        checkDiagonalsTLBR(parseInt(row) - 1, parseInt(column) - 1, checkedCells); // Top-left
+        checkDiagonalsTLBR(parseInt(row) + 1, parseInt(column) + 1, checkedCells); // Bottom-right
+    }
+}
+
+function checkDiagonalsBLTR(row, column, checkedCells) {
+    // Check if the cell is within the grid bounds and not already checked
+    if (row < 0 || row >= totalRows || column < 0 || column >= totalColumns || checkedCells.includes(`${row},${column}`)) {
+        return;
+    }
+    let cell = getCellByRowColumn(row, column);
+    if (cell && cell.dataset.Owner == player) {
+        checkedCells.push(`${row},${column}`);
+        // Recursively check both diagonal directions
+        checkDiagonalsBLTR(parseInt(row) - 1, parseInt(column) + 1, checkedCells); // Top-right
+        checkDiagonalsBLTR(parseInt(row) + 1, parseInt(column) - 1, checkedCells); // Bottom-left
     }
 }
 

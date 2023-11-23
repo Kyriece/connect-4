@@ -1,10 +1,10 @@
 /* Define CSS variables */
 :root {
-    --main-bg-color: #0077CC; /* Main background color for the board */
+    --main-bg-color: #0077cc; /* Main background color for the board */
     --border-color: #003366; /* Border color for the board */
-    --cell-size: 100px; /* Size of each cell (circle) */
+    --cell-size: 10vh; /* Size of each cell (circle) */
     --cell-border-color: #000000; /* Color of the border around each cell */
-    --disc-size: 60px; /* Size of the player's disc */
+    --disc-size: 10vh; /* Size of the player's disc */
     --player1-color: red; /* Color for player 1's discs */
     --player2-color: yellow; /* Color for player 2's discs */
     --grid-gap: 10px; /* Gap between cells */
@@ -28,11 +28,15 @@
 #Grid td {
     width: var(--cell-size);
     height: var(--cell-size);
-    background-color: #FFFFFF; /* White for empty slots */
+    background-color: white;
     border-radius: 50%; /* Circular cells */
-    border: 2px solid var(--cell-border-color);
+    border: 1vh solid var(--main-bg-color);
     text-align: center;
     vertical-align: middle;
+    box-shadow: inset 0 0 0 5px var(--cell-border-color);
+    overflow-inline: hidden;
+    /* overflow: hidden; Hide overflow content */
+    position: relative; /* Set position context for discs */
 }
 
 /* Style for player 1's discs */
@@ -40,8 +44,11 @@
     width: var(--disc-size);
     height: var(--disc-size);
     background-color: var(--player1-color);
+    /* background-image: url(Ben.png);
+    background-size: cover; */
     border-radius: 50%;
     margin: auto; /* Center the disc */
+    box-shadow: inset 0 0 0 10px rgb(156, 36, 9);
 }
 
 /* Style for player 2's discs */
@@ -49,6 +56,38 @@
     width: var(--disc-size);
     height: var(--disc-size);
     background-color: var(--player2-color);
+    /* background-image: url(denny.png);
+    background-size: cover; */
     border-radius: 50%;
     margin: auto; /* Center the disc */
+    box-shadow: inset 0 0 0 10px rgb(156, 149, 9);
 }
+
+h3 {
+    text-align: center; /* Center the text */
+    color: #0a0204; /* Bright, playful color */
+    font-family: 'Comic Sans MS', cursive, sans-serif; /* A cartoony font */
+    font-size: 24px; /* Adjust size as needed */
+    transform: rotate(-2deg); /* Slight rotation for whimsy */
+    margin: 20px 0; /* Add some margin for space around */
+}
+
+/* @keyframes slideDown {
+    0% {
+        transform: translateY(-80vh);
+        opacity: 0;
+        z-index: 100; /* Start on top of everything */
+    }
+    90% {
+        z-index: 100; /* Stay on top until just before the end */
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+        z-index: 0; /* Move behind the grid lines */
+    }
+}
+
+.disc {
+    animation: slideDown 0.7s ease-out;
+} */
